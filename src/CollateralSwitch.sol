@@ -43,11 +43,10 @@ contract CollateralSwitch {
     using GPv2SafeERC20 for IERC20;
 
     IAaveV3Pool public aaveV3Pool;
-    IDebtToken public aaveV3DebtToken;
     
-    constructor(address _aaveV3PoolAddress, address _debtTokenAddress) {
+    constructor(address _aaveV3PoolAddress) {
         aaveV3Pool = IAaveV3Pool(_aaveV3PoolAddress);
-        aaveV3DebtToken = IDebtToken(_debtTokenAddress);
+        
     }
 
     function getUserData(address user) public view returns (
@@ -61,18 +60,20 @@ contract CollateralSwitch {
         return aaveV3Pool.getUserAccountData(user);
     }
 
-    function aaveV3Supply(address asset,uint256 amount) public {
-        IERC20(asset).safeTransferFrom(msg.sender, address(this), amount);
+    function aaveV3Supply(address asset,uint256 amount, address onBehalfOf) public {
+        IERC20(asset).safeTransferFrom(onBehalfOf, address(this), amount);
         IERC20(asset).approve(address(aaveV3Pool), amount); 
-        aaveV3Pool.supply(asset, amount, msg.sender, 0);
+        aaveV3Pool.supply(asset, amount, onBehalfOf, 0);
     }
 
-    function aaveV3Withdraw(address asset, uint amount) public {
-        aaveV3Pool.withdraw(asset, amount, msg.sender);
+    function aaveV3Withdraw(address asset, address aToken, uint amount, address onBehalfOf) public {
+        IERC20(aToken).safeTransferFrom(onBehalfOf, address(this), amount);
+        IERC20(aToken).approve(address(aaveV3Pool), amount); 
+        aaveV3Pool.withdraw(asset, amount, onBehalfOf);
     }
 
     function aaveV3Repay(address asset,uint256 amount) public returns (uint256) {
-             IERC20(asset).safeTransferFrom(msg.sender, address(this), amount);
+        IERC20(asset).safeTransferFrom(msg.sender, address(this), amount);
         IERC20(asset).approve(address(aaveV3Pool), amount); 
         return aaveV3Pool.repay(asset, amount, 2, msg.sender);
     }
