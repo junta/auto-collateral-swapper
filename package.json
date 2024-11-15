@@ -1,0 +1,20 @@
+{
+  "name": "auto-collateral-swapper",
+  "version": "1.0.0",
+  "description": "**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@cowprotocol/contracts": "^1.6.0",
+    "@pythnetwork/pyth-sdk-solidity": "^4.0.0",
+    "@aave/core-v3": "^1.19.3"
+  },
+  "author": "",
+  "license": "ISC"
+}

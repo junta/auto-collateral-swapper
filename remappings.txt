@@ -1,0 +1,10 @@
+@openzeppelin/=lib/@openzeppelin/
+ds-test/=lib/forge-std/lib/ds-test/src/
+erc4626-tests/=lib/@openzeppelin/lib/erc4626-tests/
+forge-std/=lib/forge-std/src/
+murky/=lib/murky/src/
+openzeppelin-contracts/=lib/murky/lib/openzeppelin-contracts/
+safe/=lib/safe/contracts/
+cowprotocol/=lib/cowprotocol/src
+@pythnetwork/pyth-sdk-solidity/=node_modules/@pythnetwork/pyth-sdk-solidity
+@aave/core-v3=node_modules/@aave/core-v3
