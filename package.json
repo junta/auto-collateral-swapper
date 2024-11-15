@@ -8,12 +8,20 @@
     "test": "test"
   },
   "scripts": {
+    "start": "ts-node cowScript/gnosisAave.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "@cowprotocol/contracts": "^1.6.0",
     "@pythnetwork/pyth-sdk-solidity": "^4.0.0",
-    "@aave/core-v3": "^1.19.3"
+    "@aave/core-v3": "^1.19.3",
+    "@cowprotocol/app-data": "^2.3.0",
+    "@cowprotocol/cow-sdk": "^5.7.1",
+    "@types/node": "^22.9.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
+    "dotenv": "^16.4.5",
+    "ethers": "^5.7.2"
   },
   "author": "",
   "license": "ISC"
