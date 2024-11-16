@@ -1,7 +1,7 @@
 pragma solidity ^0.8.13;
 
 import {Test, console2} from "forge-std/Test.sol";
-import {MyFirstPythContract} from "../../src/MyFirstPythContract.sol";
+import {MyFirstPythContract} from "../src/MyFirstPythContract.sol";
 import {MockPyth} from "@pythnetwork/pyth-sdk-solidity/MockPyth.sol";
 
 contract MyFirstPythContractTest is Test {
