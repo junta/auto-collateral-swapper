@@ -84,36 +84,11 @@ contract StopLoss is BaseConditionalOrder {
                 revert IConditionalOrder.OrderNotValid(ORDER_EXPIRED);
             }
 
-
             // Make sure the price is no older than 10 minutes
-
             int64 collateral_price = pullCollateralPrice(600);
 
-            (, int256 basePrice,, uint256 sellUpdatedAt,) = data.sellTokenPriceOracle.latestRoundData();
-            (, int256 quotePrice,, uint256 buyUpdatedAt,) = data.buyTokenPriceOracle.latestRoundData();
-
-            /// @dev Guard against invalid price data
-            if (!(basePrice > 0 && quotePrice > 0)) {
-                revert IConditionalOrder.OrderNotValid(ORACLE_INVALID_PRICE);
-            }
-
-            /// @dev Guard against stale data at a user-specified interval. The maxTimeSinceLastOracleUpdate should at least exceed the both oracles' update intervals.
-            if (
-                !(
-                    sellUpdatedAt >= block.timestamp - data.maxTimeSinceLastOracleUpdate
-                        && buyUpdatedAt >= block.timestamp - data.maxTimeSinceLastOracleUpdate
-                )
-            ) {
-                revert IConditionalOrder.PollTryNextBlock(ORACLE_STALE_PRICE);
-            }
-
-            // Normalize the decimals for basePrice and quotePrice, scaling them to 18 decimals
-            // Caution: Ensure that base and quote have the same numeraires (e.g. both are denominated in USD)
-            basePrice = Utils.scalePrice(basePrice, data.sellTokenPriceOracle.decimals(), 18);
-            quotePrice = Utils.scalePrice(quotePrice, data.buyTokenPriceOracle.decimals(), 18);
-
-            /// @dev Scale the strike price to 18 decimals.
-            if (!(basePrice * SCALING_FACTOR / quotePrice <= data.strike)) {
+            /// @dev Scale the strike price to 6 decimals.
+            if (collateral_price > 999990) {
                 revert IConditionalOrder.PollTryNextBlock(STRIKE_NOT_REACHED);
             }
         }
