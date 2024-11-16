@@ -88,7 +88,7 @@ contract StopLoss is BaseConditionalOrder {
             int64 collateral_price = pullCollateralPrice(600);
 
             /// @dev Scale the strike price to 6 decimals.
-            if (collateral_price > 999990) {
+            if (collateral_price > 99000000) {
                 revert IConditionalOrder.PollTryNextBlock(STRIKE_NOT_REACHED);
             }
         }
