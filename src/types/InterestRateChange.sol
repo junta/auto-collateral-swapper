@@ -5,6 +5,7 @@ import {IERC20, GPv2Order, IConditionalOrder, BaseConditionalOrder} from "../Bas
 import {IAggregatorV3Interface} from "../interfaces/IAggregatorV3Interface.sol";
 import {ConditionalOrdersUtilsLib as Utils} from "./ConditionalOrdersUtilsLib.sol";
 import {BrevisAppZkOnly} from "../../brevis/contracts/contracts/lib/BrevisAppZkOnly.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 // --- error strings
 
