@@ -17,7 +17,7 @@ const ownerAddress = "0xCC6052347377630ba1042FE618F848EE8b52db09";
 
 const usdtVault = "0x85aaFcAda1Fe47C384c0F6F7C3E815Da4b69eF31";
 
-const amount = ethers.utils.parseUnits("0.1", 6);
+const amount = ethers.utils.parseUnits("1", 6);
 
 const chainId = SupportedChainId.ARBITRUM_ONE;
 const orderBookApi = new OrderBookApi({
@@ -154,7 +154,7 @@ async function withdrawCallData() {
   const callData = iface.encodeFunctionData("withdraw", [
     usdcVault,
     usdcVault,
-    amount,
+    ethers.utils.parseUnits("0.5", 6),
     ownerAddress,
   ]);
 

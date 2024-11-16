@@ -22,8 +22,9 @@ import {
 
 const collateralSwitchAbi = require("./collateralSwitchAbi.json");
 
-const amount = ethers.utils.parseUnits("0.1", 6);
-const amount18Decimal = ethers.utils.parseEther("0.1");
+const rawAmount = "1";
+const amount = ethers.utils.parseUnits(rawAmount, 6);
+const amount18Decimal = ethers.utils.parseEther(rawAmount);
 
 const chainId = SupportedChainId.GNOSIS_CHAIN;
 const orderBookApi = new OrderBookApi({
