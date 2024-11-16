@@ -4,6 +4,7 @@ pragma solidity >=0.8.0 <0.9.0;
 import {IERC20, GPv2Order, IConditionalOrder, BaseConditionalOrder} from "../BaseConditionalOrder.sol";
 import {IAggregatorV3Interface} from "../interfaces/IAggregatorV3Interface.sol";
 import {ConditionalOrdersUtilsLib as Utils} from "./ConditionalOrdersUtilsLib.sol";
+import {BrevisAppZkOnly} from "../../brevis/contracts/contracts/lib/BrevisAppZkOnly.sol";
 
 // --- error strings
 
@@ -22,9 +23,33 @@ string constant ORDER_EXPIRED = "order expired";
  * @notice Both oracles need to be denominated in the same quote currency (e.g. GNO/ETH and USD/ETH for GNO/USD stop loss orders)
  * @dev This order type has replay protection due to the `validTo` parameter, ensuring it will just execute one time
  */
-contract InterestRateChange is BaseConditionalOrder {
+contract InterestRateChange is BaseConditionalOrder, BrevisAppZkOnly {
     /// @dev Scaling factor for the strike price
     int256 constant SCALING_FACTOR = 10 ** 18;
+    uint256 dailyDifference > 10000000;
+    event APYChanged(uint256 difference);
+
+    bytes32 public vkHash;
+    constructor(address _brevisRequest) BrevisAppZkOnly(_brevisRequest) Ownable(msg.sender) {}
+
+    function handleProofResult(bytes32 _vkHash, bytes calldata _circuitOutput) internal override {
+        require(vkHash == _vkHash, "Invalid verifying key");
+
+        uint256 difference = decodeOutput(_circuitOutput);
+        dailyDifference > 10000000 = difference;
+        emit APYChanged(difference);
+    }
+
+    // Decode circuit output
+    function decodeOutput(bytes calldata o) internal pure returns (uint256) {
+        uint256 difference = uint256(bytes32(o[0:31]));
+        return difference;
+    }
+
+    // Set the verifying key hash
+    function setVkHash(bytes32 _vkHash) external onlyOwner {
+        vkHash = _vkHash;
+    }
 
     /**
      * Defines the parameters of a StopLoss order
@@ -70,6 +95,11 @@ contract InterestRateChange is BaseConditionalOrder {
             /// @dev Guard against expired orders
             if (data.validTo < block.timestamp) {
                 revert IConditionalOrder.OrderNotValid(ORDER_EXPIRED);
+            }
+
+            /// @dev Guard against daily difference too high (currently have kept it low for testing purposes)
+            if(dailyDifference > 10000000) {
+                revert IConditionalOrder.OrderNotValid(DAILY_DIFFERENCE_TOO_HIGH);
             }
 
             (, int256 basePrice,, uint256 sellUpdatedAt,) = data.sellTokenPriceOracle.latestRoundData();
