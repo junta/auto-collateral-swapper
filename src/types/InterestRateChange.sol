@@ -62,10 +62,6 @@ contract InterestRateChange is BaseConditionalOrder, BrevisAppZkOnly {
      * @param isSellOrder: Whether this is a sell or buy order
      * @param isPartiallyFillable: Whether solvers are allowed to only fill a fraction of the order (useful if exact sell or buy amount isn't know at time of placement)
      * @param validTo: The UNIX timestamp before which this order is valid
-     * @param sellTokenPriceOracle: A chainlink-like oracle returning the current sell token price in a given numeraire
-     * @param buyTokenPriceOracle: A chainlink-like oracle returning the current buy token price in the same numeraire
-     * @param strike: The exchange rate (denominated in sellToken/buyToken) which triggers the StopLoss order if the oracle price falls below. Specified in base / quote with 18 decimals.
-     * @param maxTimeSinceLastOracleUpdate: The maximum time since the last oracle update. If the oracle hasn't been updated in this time, the order will be considered invalid
      */
     struct Data {
         IERC20 sellToken;
@@ -77,10 +73,6 @@ contract InterestRateChange is BaseConditionalOrder, BrevisAppZkOnly {
         bool isSellOrder;
         bool isPartiallyFillable;
         uint32 validTo;
-        IAggregatorV3Interface sellTokenPriceOracle;
-        IAggregatorV3Interface buyTokenPriceOracle;
-        int256 strike;
-        uint256 maxTimeSinceLastOracleUpdate;
     }
 
     function getTradeableOrder(address, address, bytes32, bytes calldata staticInput, bytes calldata)
@@ -98,36 +90,8 @@ contract InterestRateChange is BaseConditionalOrder, BrevisAppZkOnly {
             }
 
             /// @dev Guard against daily difference too high (currently have kept it low for testing purposes)
-            if(dailyDifference >= 10000000) {
-                revert IConditionalOrder.OrderNotValid(DAILY_DIFFERENCE_TOO_HIGH);
-            }
-
-            (, int256 basePrice,, uint256 sellUpdatedAt,) = data.sellTokenPriceOracle.latestRoundData();
-            (, int256 quotePrice,, uint256 buyUpdatedAt,) = data.buyTokenPriceOracle.latestRoundData();
-
-            /// @dev Guard against invalid price data
-            if (!(basePrice > 0 && quotePrice > 0)) {
-                revert IConditionalOrder.OrderNotValid(ORACLE_INVALID_PRICE);
-            }
-
-            /// @dev Guard against stale data at a user-specified interval. The maxTimeSinceLastOracleUpdate should at least exceed the both oracles' update intervals.
-            if (
-                !(
-                    sellUpdatedAt >= block.timestamp - data.maxTimeSinceLastOracleUpdate
-                        && buyUpdatedAt >= block.timestamp - data.maxTimeSinceLastOracleUpdate
-                )
-            ) {
-                revert IConditionalOrder.PollTryNextBlock(ORACLE_STALE_PRICE);
-            }
-
-            // Normalize the decimals for basePrice and quotePrice, scaling them to 18 decimals
-            // Caution: Ensure that base and quote have the same numeraires (e.g. both are denominated in USD)
-            basePrice = Utils.scalePrice(basePrice, data.sellTokenPriceOracle.decimals(), 18);
-            quotePrice = Utils.scalePrice(quotePrice, data.buyTokenPriceOracle.decimals(), 18);
-
-            /// @dev Scale the strike price to 18 decimals.
-            if (!(basePrice * SCALING_FACTOR / quotePrice <= data.strike)) {
-                revert IConditionalOrder.PollTryNextBlock(STRIKE_NOT_REACHED);
+            if(dailyDifference < 10000000) {
+                revert IConditionalOrder.OrderNotValid(DAILY_DIFFERENCE_TOO_LOW);
             }
         }
 
