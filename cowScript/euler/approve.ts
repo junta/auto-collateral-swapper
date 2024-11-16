@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import "dotenv/config";
-import { ourContract, signer, usdcVault, usdt } from "./constants";
+import { ourContract, signer, usdc, usdcVault, usdt } from "./constants";
 
 async function approve(signer) {
   const approveAbi = [
@@ -15,10 +15,11 @@ async function approve(signer) {
       type: "function",
     },
   ];
-  const token = new ethers.Contract(usdcVault, approveAbi, signer);
+  const token = new ethers.Contract(usdc, approveAbi, signer);
 
   const tx = await token.approve(
-    ourContract,
+    // ourContract,
+    "0xC92E8bdf79f0507f65a392b0ab4667716BFE0110", // relayer
     ethers.utils.parseUnits("1000", 6)
   );
   console.log("tx", tx);
