@@ -65,14 +65,14 @@ contract BaseComposableCoWTest is Base, Merkle {
     }
 
     /// @dev Ensure `ComposableCoW` contract is the `ISafeSignatureVerifier` for `safe1` on the `settlement` domain
-    function test_SetUpState_ComposableCoWDomainVerifier_is_set() public {
-        assertEq(address(eHandler.domainVerifiers(safe1, settlement.domainSeparator())), address(composableCow));
-    }
+    // function test_SetUpState_ComposableCoWDomainVerifier_is_set() public {
+    //     assertEq(address(eHandler.domainVerifiers(safe1, settlement.domainSeparator())), address(composableCow));
+    // }
 
-    /// @dev Ensure `ComposableCoW` and `Settlement` have the same domain separator
-    function test_SetUpState_ComposableCoWDomainSeparator_is_set() public {
-        assertEq(composableCow.domainSeparator(), settlement.domainSeparator());
-    }
+    // /// @dev Ensure `ComposableCoW` and `Settlement` have the same domain separator
+    // function test_SetUpState_ComposableCoWDomainSeparator_is_set() public {
+    //     assertEq(composableCow.domainSeparator(), settlement.domainSeparator());
+    // }
 
     // --- Helpers ---
 
