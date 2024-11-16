@@ -26,7 +26,7 @@ string constant ORDER_EXPIRED = "order expired";
 contract InterestRateChange is BaseConditionalOrder, BrevisAppZkOnly {
     /// @dev Scaling factor for the strike price
     int256 constant SCALING_FACTOR = 10 ** 18;
-    uint256 dailyDifference > 10000000;
+    uint256 dailyDifference = 10000000;
     event APYChanged(uint256 difference);
 
     bytes32 public vkHash;
@@ -36,7 +36,7 @@ contract InterestRateChange is BaseConditionalOrder, BrevisAppZkOnly {
         require(vkHash == _vkHash, "Invalid verifying key");
 
         uint256 difference = decodeOutput(_circuitOutput);
-        dailyDifference > 10000000 = difference;
+        dailyDifference = difference;
         emit APYChanged(difference);
     }
 
@@ -98,7 +98,7 @@ contract InterestRateChange is BaseConditionalOrder, BrevisAppZkOnly {
             }
 
             /// @dev Guard against daily difference too high (currently have kept it low for testing purposes)
-            if(dailyDifference > 10000000) {
+            if(dailyDifference >= 10000000) {
                 revert IConditionalOrder.OrderNotValid(DAILY_DIFFERENCE_TOO_HIGH);
             }
 
