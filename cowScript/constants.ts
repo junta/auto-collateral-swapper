@@ -7,7 +7,7 @@ export const USDT = "0x4ECaBa5870353805a9F068101A40E0f32ed605C6";
 export const ownerAddress = "0xCC6052347377630ba1042FE618F848EE8b52db09";
 export const aavePoolAddress = "0xb50201558B00496A145fE76f7424749556E326D8";
 export const cowSettlement = "0x9008D19f58AAbD9eD0D60971565AA8510560ab41";
-export const ourContract = "0xb5284B06d554655134300F57Db081d94AcB0D947";
+export const ourContract = "0xeDfB7D0f800A2A66B3C22c6c22D78456261B2d2C";
 const provider = new ethers.providers.JsonRpcProvider(
   "https://rpc.gnosischain.com"
 );
