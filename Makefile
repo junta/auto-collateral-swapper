@@ -25,6 +25,9 @@ pull-dai-price-feed:
 deploy-pyth-price-feed:
 	forge create src/PythPriceFeed.sol:SomeContract --rpc-url $(SEPOLIA_RPC_URL) --constructor-args $(SEPOLIA_PYTH_PRICE_FEED)
 
+deploy-stop-loss-contract:
+	forge create src/types/StopLoss.sol:StopLoss --rpc-url $(SEPOLIA_RPC_URL) 
+
 deploy-sep:
 	forge script script/DeployFundMe.s.sol:DeployFundMe --rpc-url $(SEPOLIA_RPC_URL) --broadcast
 

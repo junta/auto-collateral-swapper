@@ -5,6 +5,9 @@ import {IERC20, GPv2Order, IConditionalOrder, BaseConditionalOrder} from "../Bas
 import {IAggregatorV3Interface} from "../interfaces/IAggregatorV3Interface.sol";
 import {ConditionalOrdersUtilsLib as Utils} from "./ConditionalOrdersUtilsLib.sol";
 
+import "@pythnetwork/pyth-sdk-solidity/IPyth.sol";
+import "@pythnetwork/pyth-sdk-solidity/PythStructs.sol";
+
 // --- error strings
 
 /// @dev Invalid price data returned by the oracle
@@ -25,6 +28,10 @@ string constant ORDER_EXPIRED = "order expired";
 contract StopLoss is BaseConditionalOrder {
     /// @dev Scaling factor for the strike price
     int256 constant SCALING_FACTOR = 10 ** 18;
+
+    // DAI/USD oracle
+    IPyth pyth = IPyth(0xDd24F84d36BF92C65F92307595335bdFab5Bbd21);
+    bytes32 priceFeedId = 0xb0948a5e5313200c632b51bb5ca32f6de0d36e9950a942d19751e833f70dabfd; // DAI/USD PRICE FEED ID
 
     /**
      * Defines the parameters of a StopLoss order
@@ -58,6 +65,11 @@ contract StopLoss is BaseConditionalOrder {
         uint256 maxTimeSinceLastOracleUpdate;
     }
 
+    function pullCollateralPrice(uint256 age) public view returns(int64) {
+      PythStructs.Price memory price = pyth.getPriceNoOlderThan(priceFeedId, age);
+      return price.price;
+    }
+
     function getTradeableOrder(address, address, bytes32, bytes calldata staticInput, bytes calldata)
         public
         view
@@ -71,6 +83,11 @@ contract StopLoss is BaseConditionalOrder {
             if (data.validTo < block.timestamp) {
                 revert IConditionalOrder.OrderNotValid(ORDER_EXPIRED);
             }
+
+
+            // Make sure the price is no older than 10 minutes
+
+            int64 collateral_price = pullCollateralPrice(600);
 
             (, int256 basePrice,, uint256 sellUpdatedAt,) = data.sellTokenPriceOracle.latestRoundData();
             (, int256 quotePrice,, uint256 buyUpdatedAt,) = data.buyTokenPriceOracle.latestRoundData();
