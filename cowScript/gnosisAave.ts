@@ -25,13 +25,13 @@ const collateralSwitchAbi = require("./collateralSwitchAbi.json");
 const amount = ethers.utils.parseUnits("0.1", 6);
 const amount18Decimal = ethers.utils.parseEther("0.1");
 
+const chainId = SupportedChainId.GNOSIS_CHAIN;
+const orderBookApi = new OrderBookApi({
+  chainId,
+});
+
 async function submitCowOrder() {
   try {
-    const chainId = SupportedChainId.GNOSIS_CHAIN;
-    const orderBookApi = new OrderBookApi({
-      chainId,
-    });
-
     const buyToken = wXDAI;
     let sellAmount = amount.toString();
 
@@ -68,7 +68,7 @@ async function submitCowOrder() {
 
     console.log("orderSigningResult: ", orderSigningResult);
 
-    const orderId = await orderBookApi.sendOrder({
+    const orderUid = await orderBookApi.sendOrder({
       ...quote,
       ...orderSigningResult,
       sellAmount,
@@ -76,10 +76,29 @@ async function submitCowOrder() {
       signingScheme:
         orderSigningResult.signingScheme as unknown as SigningScheme,
     });
-    console.log("orderId: ", orderId);
+    console.log("orderId: ", orderUid);
+
+    // const orderresult = await orderBookApi.getOrder(orderUid);
+    // console.log("orderresult: ", orderresult);
+
+    console.log("waiting for the order is filled.");
+    await getTrade(orderUid);
   } catch (error) {
     console.error("Error:", error);
   }
+}
+
+async function getTrade(orderUid: string) {
+  let trades;
+
+  while (!trades || trades.length === 0) {
+    await new Promise((resolve) => setTimeout(resolve, 5000)); // wait for 5 seconds
+    trades = await orderBookApi.getTrades({ orderUid });
+  }
+  console.log(
+    "Check your transaction: ",
+    `https://gnosis.blockscout.com/tx/${trades[0].txHash}`
+  );
 }
 
 async function generateHookData() {
@@ -154,3 +173,7 @@ async function withdrawCallData() {
 }
 
 submitCowOrder();
+
+// getTrade(
+//   "0xfa048609350a83aa2f18ba4edff0656b07507a599ef4796148cb091cb9e061ddcc6052347377630ba1042fe618f848ee8b52db0967382c13"
+// );
