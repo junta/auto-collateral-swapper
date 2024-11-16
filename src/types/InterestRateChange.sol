@@ -18,13 +18,16 @@ string constant STRIKE_NOT_REACHED = "strike not reached";
 /// @dev The order is not valid anymore
 string constant ORDER_EXPIRED = "order expired";
 
+/// @dev The daily difference is too low
+string constant DAILY_DIFFERENCE_TOO_LOW = "daily difference too low";
+
 /**
  * @title StopLoss conditional order
  * Requires providing two price oracles (e.g. chainlink) and a strike price. If the sellToken price falls below the strike price, the order will be triggered
  * @notice Both oracles need to be denominated in the same quote currency (e.g. GNO/ETH and USD/ETH for GNO/USD stop loss orders)
  * @dev This order type has replay protection due to the `validTo` parameter, ensuring it will just execute one time
  */
-contract InterestRateChange is BaseConditionalOrder, BrevisAppZkOnly {
+contract InterestRateChange is BaseConditionalOrder, BrevisAppZkOnly, Ownable {
     /// @dev Scaling factor for the strike price
     int256 constant SCALING_FACTOR = 10 ** 18;
     uint256 dailyDifference = 10000000;
