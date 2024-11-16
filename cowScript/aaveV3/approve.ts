@@ -15,12 +15,11 @@ async function approve(signer) {
       type: "function",
     },
   ];
-  const token = new ethers.Contract(wXDAI, approveAbi, signer);
+  const token = new ethers.Contract(aUSDC, approveAbi, signer);
 
   const tx = await token.approve(
-    // "0xC92E8bdf79f0507f65a392b0ab4667716BFE0110", // cow relayer
     ourContract,
-    ethers.utils.parseUnits("100", 18)
+    ethers.utils.parseUnits("100", 6)
   );
   console.log("tx", tx);
   const receipt = await tx.wait();

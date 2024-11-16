@@ -8,7 +8,8 @@
     "test": "test"
   },
   "scripts": {
-    "start": "ts-node cowScript/gnosisAave.ts",
+    "submit-aave": "ts-node cowScript/aaveV3/submitOrder.ts",
+    "submit-euler": "ts-node cowScript/euler/submitOrder.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
