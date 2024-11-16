@@ -1,0 +1,14 @@
+- alias: DAI/USD
+  id: b0948a5e5313200c632b51bb5ca32f6de0d36e9950a942d19751e833f70dabfd 
+  time_difference: 60
+  price_deviation: 0.5
+  confidence_ratio: 1
+- alias: BNB/USD
+  id: 2f95862b045670cd22bee3114c39763a4a08beeb663b145d283c31d7d1101c4f
+  time_difference: 60
+  price_deviation: 1
+  confidence_ratio: 1
+  early_update:
+    time_difference: 30
+    price_deviation: 0.5
+    confidence_ratio: 0.1
